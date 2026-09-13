@@ -1234,7 +1234,7 @@ async function shareResult() {
 
                 text:
                     `Meu perfil no rolê é ${profile.title}! ` +
-                    `Faça o quiz e descubra o seu.`,
+                    `Faça o quiz e descubra o seu.\n`+'https://airamdazl.github.io/quizPA/',
 
                 files: [file]
 
