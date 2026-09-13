@@ -903,7 +903,13 @@ async function shareResult() {
 
             baseImage.onload = resolve;
 
-            baseImage.onerror = reject;
+            baseImage.onerror = () => {
+                reject(
+                    new Error(
+                        "Não foi possível carregar card-resultado.png."
+                    )
+                );
+            };
 
         });
 
@@ -922,75 +928,166 @@ async function shareResult() {
 
 
         /* =====================================================
-           FUNÇÃO PARA TEXTO CENTRALIZADO
+           ÁREA DO RESULTADO
+           
+           O texto será colocado somente na área central
+           reservada pela arte do card.
         ===================================================== */
 
-        function drawCenteredText(
+        const centerX = canvas.width / 2;
+
+        const resultArea = {
+            maxWidth: 700,
+            maxHeight: 245
+        };
+
+
+        /* =====================================================
+           AJUSTAR TAMANHO DA FONTE
+        ===================================================== */
+
+        function fitFont(
             text,
-            centerX,
-            centerY,
-            maxWidth,
-            maxFontSize,
-            minFontSize
+            fontFamily,
+            weight,
+            maxSize,
+            minSize,
+            maxWidth
         ) {
 
-            let fontSize = maxFontSize;
+            let size = maxSize;
 
-            do {
+            while (size > minSize) {
 
-                ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+                ctx.font =
+                    `${weight} ${size}px ${fontFamily}`;
 
-                if (ctx.measureText(text).width <= maxWidth) {
+                if (
+                    ctx.measureText(text).width <= maxWidth
+                ) {
                     break;
                 }
 
-                fontSize -= 4;
+                size -= 2;
+            }
 
-            } while (fontSize >= minFontSize);
+            return size;
+        }
 
+
+        /* =====================================================
+           DESENHAR NOME DO PERFIL
+           
+           O nome do resultado é o principal destaque.
+        ===================================================== */
+
+        function drawProfileTitle(text) {
+
+            const fontFamily =
+                'Impact, Haettenschweiler, "Arial Narrow Bold", Arial, sans-serif';
+
+            const fontSize = fitFont(
+                text,
+                fontFamily,
+                "900",
+                112,
+                62,
+                resultArea.maxWidth
+            );
+
+            ctx.font =
+                `900 ${fontSize}px ${fontFamily}`;
 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
+            /*
+               Contorno preto para separar o texto
+               da arte de fundo.
+            */
+
+            ctx.lineWidth = 12;
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.95)";
+
+            ctx.strokeText(
+                text,
+                centerX,
+                735
+            );
+
+
+            /*
+               Texto principal.
+            */
+
+            ctx.fillStyle = "#ffffff";
+
             ctx.fillText(
                 text,
                 centerX,
-                centerY
+                735
+            );
+
+
+            /*
+               Pequeno contorno verde para integrar
+               o texto à identidade do card.
+            */
+
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "rgba(0, 255, 56, 0.8)";
+
+            ctx.strokeText(
+                text,
+                centerX,
+                735
             );
         }
 
 
         /* =====================================================
-           FUNÇÃO PARA QUEBRAR TEXTO EM LINHAS
+           QUEBRAR E DESENHAR DESCRIÇÃO
         ===================================================== */
 
-        function drawWrappedText(
+        function drawProfileDescription(
             text,
             centerX,
             startY,
             maxWidth,
-            fontSize,
-            lineHeight
+            maxHeight
         ) {
 
-            ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+            const fontFamily =
+                "Arial, Helvetica, sans-serif";
+
+            const fontSize = 34;
+            const lineHeight = 42;
+
+            ctx.font =
+                `700 ${fontSize}px ${fontFamily}`;
 
             ctx.textAlign = "center";
             ctx.textBaseline = "top";
 
-            const words = text.split(" ");
+            const words = text
+                .trim()
+                .split(/\s+/);
 
             const lines = [];
 
             let line = "";
 
 
+            /*
+               Monta as linhas respeitando
+               a largura máxima.
+            */
+
             words.forEach(word => {
 
                 const testLine = line
                     ? `${line} ${word}`
                     : word;
-
 
                 if (
                     ctx.measureText(testLine).width <= maxWidth
@@ -1016,58 +1113,71 @@ async function shareResult() {
 
 
             /*
-               Limita a quantidade de linhas para impedir
-               que o texto ultrapasse a área do card.
+               Limita a quantidade de linhas
+               para não invadir outros elementos.
             */
-            const maxLines = 7;
+
+            const maxLines =
+                Math.floor(maxHeight / lineHeight);
+
+            const visibleLines =
+                lines.slice(0, maxLines);
 
 
-            lines
-                .slice(0, maxLines)
-                .forEach((lineText, index) => {
+            visibleLines.forEach(
+                (lineText, index) => {
+
+                    const y =
+                        startY +
+                        (index * lineHeight);
+
+
+                    /*
+                       Contorno preto.
+                    */
+
+                    ctx.lineWidth = 7;
+                    ctx.strokeStyle =
+                        "rgba(0, 0, 0, 0.9)";
+
+                    ctx.strokeText(
+                        lineText,
+                        centerX,
+                        y
+                    );
+
+
+                    /*
+                       Texto branco.
+                    */
+
+                    ctx.fillStyle = "#ffffff";
 
                     ctx.fillText(
                         lineText,
                         centerX,
-                        startY + (index * lineHeight)
+                        y
                     );
 
-                });
+                }
+            );
         }
 
 
         /* =====================================================
-           COR DOS TEXTOS
+           ESCREVER RESULTADO NO CARD
         ===================================================== */
 
-        ctx.fillStyle = "#ffffff";
-
-
-        /* =====================================================
-           NOME DO PERFIL
-        ===================================================== */
-
-        drawCenteredText(
-            profile.title,
-            540,
-            575,
-            820,
-            92,
-            48
+        drawProfileTitle(
+            profile.title
         );
 
-
-        /* =====================================================
-           DESCRIÇÃO DO PERFIL
-        ===================================================== */
-
-        drawWrappedText(
+        drawProfileDescription(
             profile.description,
-            540,
-            1215,
-            800,
-            42,
-            58
+            centerX,
+            805,
+            700,
+            resultArea.maxHeight
         );
 
 
@@ -1086,7 +1196,9 @@ async function shareResult() {
 
 
         if (!blob) {
-            throw new Error("Não foi possível gerar a imagem.");
+            throw new Error(
+                "Não foi possível gerar a imagem."
+            );
         }
 
 
@@ -1104,7 +1216,7 @@ async function shareResult() {
 
 
         /* =====================================================
-           COMPARTILHAMENTO NATIVO DA IMAGEM
+           COMPARTILHAMENTO NATIVO
         ===================================================== */
 
         if (
@@ -1117,7 +1229,8 @@ async function shareResult() {
 
             await navigator.share({
 
-                title: `Meu perfil no rolê: ${profile.title}`,
+                title:
+                    `Meu perfil no rolê: ${profile.title}`,
 
                 text:
                     `Meu perfil no rolê é ${profile.title}! ` +
@@ -1135,13 +1248,16 @@ async function shareResult() {
            FALLBACK — DOWNLOAD DO PNG
         ===================================================== */
 
-        const downloadUrl = URL.createObjectURL(blob);
+        const downloadUrl =
+            URL.createObjectURL(blob);
 
-        const link = document.createElement("a");
+        const link =
+            document.createElement("a");
 
         link.href = downloadUrl;
 
-        link.download = `resultado-${winnerKey}.png`;
+        link.download =
+            `resultado-${winnerKey}.png`;
 
         document.body.appendChild(link);
 
@@ -1167,16 +1283,19 @@ async function shareResult() {
 
 
         alert(
-            "Não foi possível compartilhar o card automaticamente. " +
-            "Verifique se o arquivo card-resultado.png está na pasta assets/img."
+            "Não foi possível gerar o card. " +
+            "Verifique se o arquivo " +
+            "card-resultado.png está na pasta assets/img."
         );
 
 
     } finally {
 
-        shareResultButton.innerHTML = originalText;
+        shareResultButton.innerHTML =
+            originalText;
 
-        shareResultButton.disabled = false;
+        shareResultButton.disabled =
+            false;
     }
 }
 
