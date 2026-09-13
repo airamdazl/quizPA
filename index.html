@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>AIRAM • Sexta à Noite</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- FUNDO -->
+    <div class="background"></div>
+    <div class="background-overlay"></div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="app">
+
+        <!-- LOGOS LADO A LADO -->
+        <header class="top">
+            <div class="logos-wrapper">
+                <img src="assets/img/logo.png" alt="Putaria Aditivada" class="logo-main">
+                <img src="assets/img/airam.png" alt="Airam" class="logo-airam">
+            </div>
+
+            <!-- BOTÕES SUPERIORES -->
+            <div id="topActions" class="top-actions">
+                <button id="soundButton" class="action-button" type="button">
+                    <span class="action-icon">♫</span>
+                    OUVIR MÚSICA
+                </button>
+
+                <button id="shareMusicButton" class="action-button share-music" type="button">
+                    <span class="action-icon">↗</span>
+                    COMPARTILHAR MÚSICA
+                </button>
+            </div>
+        </header>
+
+        <!-- TÍTULO -->
+        <section class="intro">
+            <h1>
+                SEXTA À NOITE.
+                <span>ZONA LESTE.</span>
+                E AGORA?
+            </h1>
+        </section>
+
+        <!-- PROGRESSO -->
+        <section class="progress-area">
+            <div class="progress-info">
+                <strong id="progressLabel">ETAPA 1 DE 4</strong>
+                <strong id="progressNumber">25%</strong>
+            </div>
+
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </section>
+
+        <!-- ÁREA DO QUIZ -->
+        <section id="questionCard" class="question-card">
+
+            <!-- MOLDURA -->
+            <div class="frame-container">
+                <img id="frame" src="assets/img/moldura4.png" alt="Moldura" class="frame">
+
+                <!-- CONTEÚDO DENTRO DA MOLDURA -->
+                <div class="frame-content">
+
+                    <div id="questionNumber" class="question-number">
+                        PERGUNTA 01
+                    </div>
+
+                    <div id="sceneTitle" class="scene-title">
+                        SEXTA-FEIRA, 23H.
+                    </div>
+
+                    <h2 id="question" class="question">
+                        Seu amigo manda: “Cheguei. Tá lotado já. Vem.” O que você faz?
+                    </h2>
+
+                    <p id="description" class="description">
+                        Você tinha planejado ficar em casa. Mas era sexta-feira... e você sabe como essas histórias começam.
+                    </p>
+
+                    <!-- RESPOSTAS -->
+                    <div id="answers" class="answers"></div>
+
+                    <!-- RESULTADO -->
+                    <div id="resultScreen" class="result-screen" aria-live="polite">
+                        <div id="resultScore" class="result-score">
+                            SEU PERFIL DO ROLÊ
+                        </div>
+
+                        <h2 id="resultTitle" class="result-title">
+                            CURTIÇÃO
+                        </h2>
+
+                        <p id="resultDescription" class="result-description">
+                            Você vai pra dançar, ouvir o som pesado e esquecer dos problemas. Onde tiver grave batendo, você tá lá!
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BOTÃO COMPARTILHAR RESULTADO -->
+            <div id="resultActions" class="result-actions">
+                <button id="shareResultButton" class="action-button share-result" type="button">
+                    <span class="action-icon">✦</span>
+                    COMPARTILHAR RESULTADO
+                </button>
+            </div>
+
+            <!-- NAVEGAÇÃO -->
+            <div class="navigation">
+                <button
+                    id="backButton"
+                    class="back-button"
+                    type="button"
+                    aria-label="Voltar para a pergunta anterior"
+                >
+                    <img src="assets/img/btn-voltar.png" alt="Voltar">
+                </button>
+            </div>
+
+        </section>
+
+        <!-- RODAPÉ -->
+        <footer>
+            AIRAM <span>•</span> PUTARIA ADITIVADA
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
